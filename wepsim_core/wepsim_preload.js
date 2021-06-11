@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2020 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
+ *  Copyright 2015-2021 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
  *
  *  This file is part of WepSIM.
  *
@@ -30,10 +30,10 @@
 
         // preload tasks in order
 	var o = '' ;
-        for (var i=0; i<ws_preload_tasks.length; i++)
+        for (var i=0; i<ws_info.preload_tasks.length; i++)
         {
-	    key = ws_preload_tasks[i].name ;
-	    act = ws_preload_tasks[i].action ;
+	    key = ws_info.preload_tasks[i].name ;
+	    act = ws_info.preload_tasks[i].action ;
 
 	    if (hash[key] !== '') {
 	        o = o + act(hash) ;
@@ -57,9 +57,9 @@
 
 	    // 2.- get parameters
             var parameters = new URL(window_location).searchParams ;
-            for (i=0; i<ws_preload_tasks.length; i++) 
+            for (i=0; i<ws_info.preload_tasks.length; i++) 
             {
-                 hash_field = ws_preload_tasks[i].name ;
+                 hash_field = ws_info.preload_tasks[i].name ;
                  hash[hash_field] = parameters.get(hash_field) ;
 
 	         // overwrite null with default values

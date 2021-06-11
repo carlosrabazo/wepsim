@@ -1,5 +1,5 @@
 /*    
- *  Copyright 2015-2020 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
+ *  Copyright 2015-2021 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
  *
  *  This file is part of WepSIM.
  *
@@ -66,9 +66,9 @@
 
 	    // check endpoint
 	    var api_endpoint = rest_info.endpoint ;
-	    if (typeof api_endpoint == "function") {
-                api_endpoint = api_endpoint() ;
-	    }
+            if (api_endpoint.value instanceof Vuex.Store) {
+	        api_endpoint = get_value(api_endpoint) ;
+            }
 
 	    if (api_endpoint.trim() === "") {
 		return false ;

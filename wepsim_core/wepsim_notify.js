@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2020 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
+ *  Copyright 2015-2021 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
  *
  *  This file is part of WepSIM.
  *
@@ -83,46 +83,4 @@
             simcore_record_append_new('Close all notifications',
                                       'wepsim_notify_close();\n') ;
     }
-
-
-    /*
-     * Notifications (summary)
-     */
-
-    function table_notifications_html ( notifications )
-    {
-	// setup content...
-	var u = '' ;
-        var t = null ;
-	var m = '' ;
-	for (var i=notifications.length-1; i!=-1; i--)
-	{
-		 t = new Date(notifications[i].date) ;
-		 m = notifications[i].message.replace(/\n/g, '<br>\n') ;
-
-                 u += '<li class="list-group-item list-group-item-' + notifications[i].type + ' rounded-lg mx-2 my-1 p-2 shadow-sm">' +
-			'<h5 class="m-0 collapse7 show">' +
-			'<span class="badge">(' +
-                            t.getHours()    + ':' + t.getMinutes()   + ':' + t.getSeconds() + '.' + t.getMilliseconds() +
-			')</span>' +
-			'<span class="badge">[' + t.getFullYear() + '-' + (t.getMonth()+1) + '-' + t.getDate() + ']</span>' +
-			'</h5>' +
-			'<span class="text-monospace">' + notifications[i].title + ':' + '</span>' + m +
-			'</li>' ;
-	}
-	if (u.trim() === '') {
-	    u = '<p class="m-3 text-center py-4"><b>&lt;Empty&gt;</b></p>' ;
-	}
-
-	// build html
-	var o = '<div id="container-notifications3" class="card border-white" ' +
-                '     style="max-height:50vh; overflow:auto; -webkit-overflow-scrolling: touch;">' +
-	        '<ul class="list-group list-group-flush">' +
-                u +
-	        '</ul>' +
-	        '</div>' ;
-
-	return o ;
-    }
-
 

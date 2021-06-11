@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2020 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
+ *  Copyright 2015-2021 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
  *
  *  This file is part of WepSIM.
  *
@@ -28,7 +28,6 @@
                                         "<ul>" +
                                         "<li>Оборудование для работы (например, процессор EP и т. д.) </li>" +
                                         "<li>Режим только сборки, с целочисленными инструкциями MIPS<sub>32</sub> или RISC-V<sub>32</sub> </li>" +
-                                        "<li>Режим обучения, рекомендуется в начале; -) </li>" +
                                         "</ul>",
 		'step3':		'В правом верхнем углу кнопка «Справка» открывает связанный диалог. <br> <br> Диалог справки суммирует учебные пособия, описания, информацию и т. Д.',
 		'step4':		'А слева кнопка «примеры» открывает диалоговое окно примеров. <br> <br> Существует множество примеров, которые можно использовать для постепенного изучения.',

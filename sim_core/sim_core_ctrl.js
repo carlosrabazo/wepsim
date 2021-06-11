@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2020 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
+ *  Copyright 2015-2021 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
  *
  *  This file is part of WepSIM.
  *
@@ -20,47 +20,8 @@
 
 
         /*
-         *  Get/Set
+         *  base
          */
-
-        function get_simware ( )
-        {
-            var cf = simhw_internalState('FIRMWARE') ;
-
-	    if (typeof cf['firmware'] == "undefined")            cf['firmware']           = [] ;
-	    if (typeof cf['mp'] == "undefined")                  cf['mp']                 = {} ;
-	    if (typeof cf['seg'] == "undefined")                 cf['seg']                = {} ;
-	    if (typeof cf['assembly'] == "undefined")            cf['assembly']           = {} ;
-	    if (typeof cf['labels'] == "undefined")              cf['labels']             = {} ;
-	    if (typeof cf['labels2'] == "undefined")             cf['labels2']            = {} ;
-	    if (typeof cf['labels_firm'] == "undefined")         cf['labels_firm']        = {} ;
-	    if (typeof cf['registers'] == "undefined")           cf['registers']          = {} ;
-	    if (typeof cf['pseudoInstructions'] == "undefined")  cf['pseudoInstructions'] = [] ;
-	    if (typeof cf['stackRegister'] == "undefined")       cf['stackRegister']      = {} ;
-	    if (typeof cf['cihash'] == "undefined")              cf['cihash']             = {} ;
-	    if (typeof cf['cocop_hash'] == "undefined")          cf['cocop_hash']         = {} ;
-
-            return cf ;
-	}
-
-        function set_simware ( preWARE )
-        {
-            var cf = simhw_internalState('FIRMWARE') ;
-
-	    if (typeof preWARE['firmware'] != "undefined")           cf['firmware'] = preWARE['firmware'] ;
-	    if (typeof preWARE['mp'] != "undefined")                 cf['mp'] = preWARE['mp'] ;
-	    if (typeof preWARE['registers'] != "undefined")          cf['registers'] = preWARE['registers'] ;
-	    if (typeof preWARE['assembly'] != "undefined")           cf['assembly'] = preWARE['assembly'] ;
-	    if (typeof preWARE['pseudoInstructions'] != "undefined") cf['pseudoInstructions'] = preWARE['pseudoInstructions'] ;
-
-	    if (typeof preWARE['seg'] != "undefined")                cf['seg'] = preWARE['seg'] ;
-	    if (typeof preWARE['labels'] != "undefined")             cf['labels'] = preWARE['labels'] ;
-	    if (typeof preWARE['labels2'] != "undefined")            cf['labels2'] = preWARE['labels2'] ;
-	    if (typeof preWARE['labels_firm'] != "undefined")        cf['labels_firm'] = preWARE['labels_firm'] ;
-	    if (typeof preWARE['stackRegister'] != "undefined")      cf['stackRegister'] = preWARE['stackRegister'] ;
-	    if (typeof preWARE['cihash'] != "undefined")             cf['cihash'] = preWARE['cihash'] ;
-	    if (typeof preWARE['cocop_hash'] != "undefined")         cf['cocop_hash'] = preWARE['cocop_hash'] ;
-	}
 
         function array_includes ( arr, val )
         {
@@ -271,12 +232,16 @@
 		 // update MC[uADDR]
 	         var maddr_name = simhw_sim_ctrlStates_get().mpc.state ;
 		 var curr_maddr = get_value(simhw_sim_state(maddr_name)) ;
-		 if (typeof simhw_internalState_get('MC', curr_maddr) == "undefined") {
-		     simhw_internalState_set('MC', curr_maddr, new Object()) ;
-		     simhw_internalState_set('MC_dashboard', curr_maddr, new Object()) ;
-		 }
-		 simhw_internalState_get('MC', curr_maddr)[key] = simhw_sim_signal(key).value ;
-		 simhw_internalState_get('MC_dashboard', curr_maddr)[key] = { comment: "", breakpoint: false, state: false, notify: new Array() };
+
+                 var mc_obj = simhw_internalState('MC') ;
+                 var mcelto = control_memory_get(mc_obj, curr_maddr) ;
+                 if (typeof mcelto === "undefined") {
+                     mcelto = {} ;
+                 }
+
+                 mcelto.value[key] = simhw_sim_signal(key).value ;
+                 mcelto.comments   = [] ;
+                 control_memory_set(mc_obj, curr_maddr, mcelto) ;
 
 		 // update ROM[..]
 		 update_signal_firmware(key) ;
@@ -300,30 +265,23 @@
 
 	    // 2.- load the MC from ROM['firmware']
             simhw_internalState_reset('MC', {}) ;
-            simhw_internalState_reset('MC_dashboard', {}) ;
+            var mc_obj = simhw_internalState('MC') ;
+            var mcelto = null ;
             for (i=0; i<SIMWARE['firmware'].length; i++)
 	    {
-               var elto_state  = false ;
-               var elto_break  = false ;
-               var elto_notify = new Array() ;
-
 	       var last = SIMWARE['firmware'][i]["microcode"].length ; // mc = microcode
                var mci  = SIMWARE['firmware'][i]["mc-start"] ;
 	       for (var j=0; j<last; j++)
 	       {
-		    var comment  = SIMWARE['firmware'][i]["microcomments"][j] ;
-                    elto_state   = (comment.trim().split("state:").length > 1) ;
-                    elto_break   = (comment.trim().split("break:").length > 1) ;
-                    elto_notify  =  comment.trim().split("notify:") ;
-		    for (var k=0; k<elto_notify.length; k++) {
-		         elto_notify[k] = elto_notify[k].split('\n')[0] ;
-                    }
+                    var mcelto = {
+		                    value:        SIMWARE['firmware'][i]["microcode"][j],
+                                    comments:     SIMWARE['firmware'][i]["microcomments"][j],
+                                    is_native:    SIMWARE['firmware'][i].is_native,
+                                    NATIVE:       SIMWARE['firmware'][i].NATIVE,
+                                    NATIVE_JIT:   SIMWARE['firmware'][i].NATIVE_JIT
+                                 } ;
+                    control_memory_set(mc_obj, mci, mcelto) ;
 
-		    simhw_internalState_set('MC',           mci, SIMWARE['firmware'][i]["microcode"][j]) ;
-                    simhw_internalState_set('MC_dashboard', mci, { comment: comment,
-                                                                   state: elto_state,
-                                                                   breakpoint: elto_break,
-                                                                   notify: elto_notify }) ;
 		    mci++;
 	       }
 	    }
@@ -339,8 +297,9 @@
 	       var ma = SIMWARE['firmware'][i]["mc-start"] ;
 	       var co = parseInt(SIMWARE['firmware'][i]["co"], 2) ;
                var cop = 0 ;
-	       if (typeof SIMWARE['firmware'][i]["cop"] != "undefined")
+	       if (typeof SIMWARE['firmware'][i]["cop"] != "undefined") {
 	           cop = parseInt(SIMWARE['firmware'][i]["cop"], 2) ;
+               }
 
                var rom_addr = 64*co + cop ;
 	       simhw_internalState_set('ROM', rom_addr, ma) ;
@@ -349,11 +308,14 @@
 
 	    // 4.- load the MP from SIMWARE['mp']
             simhw_internalState_reset('MP', {}) ;
+            var mp_obj = simhw_internalState('MP') ;
+            var melto  = null ;
 	    for (var key in SIMWARE['mp'])
 	    {
-	       var kx = parseInt(key) ;
-	       var kv = parseInt(SIMWARE['mp'][key].replace(/ /g,''), 2) ;
-               simhw_internalState_set('MP', kx, kv) ;
+                 melto = Object.assign({}, SIMWARE['mp'][key]) ;
+                 melto.value = parseInt(SIMWARE['mp'][key].value.replace(/ /g,''), 2) ;
+
+                 main_memory_set(mp_obj, parseInt(key), melto) ;
 	    }
 
 	    // 5.- load the segments from SIMWARE['seg']
@@ -363,14 +325,8 @@
 	         simhw_internalState_set('segments', key, SIMWARE['seg'][key]) ;
 	    }
 
-            // 6.- show memories...
-            setTimeout(function() {
-                            var mp_obj  = simhw_internalState('MP') ;
-                            var mc_obj  = simhw_internalState('MC') ;
-                            var mcd_obj = simhw_internalState('MC_dashboard') ;
-
-                            show_main_memory   (mp_obj, 0, true, true) ;
-                            show_control_memory(mc_obj, mcd_obj, 0, true) ;
-                       }, 100) ;
+	    // 6.- show memories...
+            show_main_memory   (mp_obj, 0, true, true) ;
+            show_control_memory(mc_obj, 0, true) ;
 	}
 

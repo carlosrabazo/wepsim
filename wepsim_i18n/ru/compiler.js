@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2020 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
+ *  Copyright 2015-2021 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
  *
  *  This file is part of WepSIM.
  *
@@ -23,6 +23,7 @@
 
 	        "PROBLEM AROUND LINE":          "Проблема вокруг линии",
 		'NO TAG OR DIRECTIVE':		'Ожидаемый тег или директива, но нашел этот маркер вместо этого: ',
+		'NO TAG, DIR OR INS':		'Обнаружен недействительный тег (например: tag1 :) директива (например: .data) или инструкция: ',
 		'INVALID TAG FORMAT':		'Тег должен следовать буквенно-цифровому формату (начиная с буквой или подчеркиванием): ',
 		'TAG OR INSTRUCTION':		'Тег не может иметь такое же имя, как и инструкция: ',
 		'REPEATED TAG':			'Повторные теги: ',
@@ -86,6 +87,7 @@
 		'NO NWORDS':			'Ожидаемые ключевое слово «nwords» не найдено',
 		'INCORRECT ADDRESSING':		'Тип адресации неправильные (ABS или REL)',
 		'UNEXPECTED FIELD':		'Неожиданное поле найдено: ',
+                'CHECK ORDER':                  'Пожалуйста, проверьте порядок полей',
 		'STARTBIT OoR':			'startbit вне диапазона: ',
 		'STOPBIT OoR':			'стоповый бит из диапазона: ',
 		'OVERLAPPING FIELD':		'Перекрытие поля: ',

@@ -2,14 +2,14 @@
   "name": "wepsim-travisci",
   "description": "Check WepSIM",
   "author": "acaldero@inf.uc3m.es",
-  "version": "1.1.8",
+  "version": "1.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/acaldero/wepsim.git"
   },
   "license": "GPL-3.0",
   "devDependencies": {
-    "jshint": "^2.11.1",
+    "jshint": "^2.12.0",
     "terser": "^4.8.0"
   },
   "scripts": {
@@ -23,6 +23,9 @@
     "inquirer": "^6.5.2",
     "inquirer-autocomplete-prompt": "^1.0.2",
     "inquirer-command-prompt": "0.0.29",
+    "readline-sync": "^1.4.10",
+    "vue": "^2.6.12",
+    "vuex": "^3.6.0",
     "yargs": "^15.4.1"
   }
 }

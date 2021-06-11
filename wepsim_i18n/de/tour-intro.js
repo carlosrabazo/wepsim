@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2020 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
+ *  Copyright 2015-2021 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
  *
  *  This file is part of WepSIM.
  *
@@ -29,7 +29,6 @@
                                    "<ul>" +
                                    "<li>Die Hardware, mit der gearbeitet werden soll (z. B. EP - Prozessor usw.)</li>" +
                                    "<li>Nur Assembly-Modus mit ganzzahligen MIPS <sub> 32 </ sub> - oder RISC-V <sub>32</sub>-Anweisungen</li>" +
-                                   "<li>Der zu Beginn empfohlene Lernmodus; -)</li>" +
                                    "</ul>",
 
 		'step3':		'Oben rechts öffnet die Schaltfläche "Hilfe" den zugehörigen Dialog. <br> <br> Der Hilfedialog fasst die Tutorials, Beschreibungen, Informationen usw. zusammen.',

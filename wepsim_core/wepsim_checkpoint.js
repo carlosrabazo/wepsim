@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2020 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
+ *  Copyright 2015-2021 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
  *
  *  This file is part of WepSIM.
  *
@@ -26,13 +26,13 @@
     function wepsim_checkpoint_get ( tagName )
     {
 	    // get mode and history
-	    var ws_mode           = get_cfg('ws_mode') ;
-            var history_obj       = wepsim_state_history_get() ;
+	    var ws_mode     = get_cfg('ws_mode') ;
+            var history_obj = wepsim_state_history_get() ;
 
 	    // get current state
 	    var state_current     = wepsim_state_get_clk() ;
 	    var state_obj         = simcore_simstate_current2state() ;
-	    state_current.content = simcore_simstate_state2checklist(state_obj) ;
+	    state_current.content = simcore_simstate_state2checklist(state_obj, '') ;
 
 	    // pack elements
 	    var elements = {
@@ -76,7 +76,7 @@
 		// all saved states are loaded into state history
 	        wepsim_state_history_reset() ;
 	        for (var i=0; i<checkpointObj.state_history.length; i++) {
-	             state_history.push(checkpointObj.state_history[i]) ;
+	             ws_info.state_history.push(checkpointObj.state_history[i]) ;
 	        }
 	        wepsim_state_history_list() ;
 

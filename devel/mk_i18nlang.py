@@ -2,7 +2,7 @@
 
 
 #*
-#*  Copyright 2015-2020 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
+#*  Copyright 2015-2021 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
 #*
 #*  This file is part of WepSIM.
 #*
@@ -368,7 +368,6 @@ i18n_eltos['tour_intro'] = {
 		 "<ul>" +
 		 "<li>The hardware to work with (e.g. EP processor, etc.)</li>" +
 		 "<li>Assembly only mode, with integer MIPS<sub>32</sub> or RISC-V<sub>32</sub> instructions</li>" +
-		 "<li>The tutorial mode, recommended at the beginning ;-)</li>" +
 		 "</ul>",
 
 	"step3": "On the top-right, the 'help' button opens the associated dialog.<br>" +
@@ -620,7 +619,7 @@ def print_content(L_D, C_N):
 
     # + print header
     f.write("/*\n") ;
-    f.write(" *  Copyright 2015-2020 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve\n") ;
+    f.write(" *  Copyright 2015-2021 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve\n") ;
     f.write(" *\n") ;
     f.write(" *  This file is part of WepSIM.\n") ;
     f.write(" *\n") ;

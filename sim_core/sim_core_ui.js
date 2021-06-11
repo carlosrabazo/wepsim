@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2020 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
+ *  Copyright 2015-2021 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
  *
  *  This file is part of WepSIM.
  *
@@ -56,26 +56,18 @@
                 return valuec ;
         }
 
-        function pack5 ( val )
+        function simcoreui_pack ( val, pack_size )
         {
-            return "00000".substring(0, 5 - val.length) + val ;
-        }
+            var base_str = "0".repeat(pack_size) ;
 
-        function pack8 ( val )
-        {
-            return "00000000".substring(0, 8 - val.length) + val ;
-        }
-
-        function pack32 ( val )
-        {
-            return "00000000000000000000000000000000".substring(0, 32 - val.length) + val;
+            return base_str.substring(0, pack_size - val.length) + val ;
         }
 
         function hex2bin   ( hexvalue )
         {
                 var valuebin = hexvalue.toString(2) ;
 
-                valuebin = pack32(valuebin) ;
+                valuebin = simcoreui_pack(valuebin, 32) ;
                 valuebin = valuebin.substring(0,4)   + " " + valuebin.substring(4,8)   + " " +
                            valuebin.substring(8,12)  + " " + valuebin.substring(12,16) + "<br>" +
                            valuebin.substring(16,20) + " " + valuebin.substring(20,24) + " " +
@@ -97,120 +89,17 @@
 				    break ;
 		   case "float":    fmt_value = hex2float(value) ;
 				    break ;
+		   case "char":     fmt_value = "'" + String.fromCharCode(value) + "'" ;  // fmt[1] = ascii
+				    break ;
 		   default:         fmt_value = value.toString() ;
 		}
 
 		if (fmt[2] === "fill") {
-                    fmt_value = pack8(fmt_value) ;
+                    fmt_value = simcoreui_pack(fmt_value, 8) ;
 		}
 
 		// return formated value
 		return fmt_value ;
-        }
-
-        // verbal description
-
-	function get_deco_from_pc ( pc )
-	{
-	        var hexstrpc  = "0x" + pc.toString(16) ;
-                var curr_firm = simhw_internalState('FIRMWARE') ;
-
-	        if ( (typeof curr_firm.assembly                  === "undefined") ||
-	             (typeof curr_firm.assembly[hexstrpc]        === "undefined") ||
-	             (typeof curr_firm.assembly[hexstrpc].source === "undefined") )
-                {
-                      return "" ;
-                }
-
-                return curr_firm.assembly[hexstrpc].source ;
-        }
-
-	function get_verbal_from_current_mpc ( )
-	{
-	     var active_signals = "" ;
-	     var active_verbal  = "" ;
-
-	     var maddr_name = simhw_sim_ctrlStates_get().mpc.state ;
-	     var curr_maddr = get_value(simhw_sim_state(maddr_name)) ;
-
-             var mins = simhw_internalState_get('MC', curr_maddr) ;
-	     for (var key in mins)
-	     {
-		  if ("MADDR" === key) {
-	   	      active_verbal  = active_verbal  + "MADDR is " + mins[key] + ". " ;
-                      continue ;
-		  }
-
-		  active_signals = active_signals + key + " ";
-	   	  active_verbal  = active_verbal  + compute_signal_verbals(key, mins[key]) ;
-	     }
-
-             // set default for empty
-             active_signals = active_signals.trim() ;
-             if (active_signals === "")
-                 active_signals = "<no active signal>" ;
-             if (active_verbal.trim() === "")
-                 active_verbal = "<no actions>" ;
-
-             // return
-             return "Activated signals are: " + active_signals + ". Associated actions are: " + active_verbal ;
-        }
-
-	function get_verbal_from_current_pc ( )
-	{
-	     var pc_name = simhw_sim_ctrlStates_get().pc.state ;
-	     var reg_pc  = get_value(simhw_sim_state(pc_name)) ;
-
-             var pc = parseInt(reg_pc) - 4 ;
-             var decins = get_deco_from_pc(pc) ;
-
-	     if ("" == decins.trim()) {
-		 decins = "not jet defined" ;
-	     }
-
-             return "Current instruction is: " + decins + " and PC points to " + show_value(pc) + ". " ;
-        }
-
-
-        /*
-         *  ko binding
-         */
-
-        function ko_observable ( initial_value )
-        {
-	    // without ko
-	    if (typeof ko === "undefined") {
-	        return initial_value ;
-	    }
-
-	    // with ko
-	    if (typeof cfg_show_rf_refresh_delay === "undefined") {
-	        cfg_show_rf_refresh_delay = 120 ;
-            }
-
-            return ko.observable(initial_value).extend({rateLimit: cfg_show_rf_refresh_delay}) ;
-        }
-
-        function ko_rebind_state ( state, id_elto )
-        {
-	    // without ko
-	    if (typeof ko === "undefined") {
-                return ;
-            }
-
-	    // with ko
-	    if (typeof cfg_show_rf_refresh_delay === "undefined") {
-	        cfg_show_rf_refresh_delay = 120 ;
-            }
-
-            var state_obj = simhw_sim_state(state) ;
-            if (typeof state_obj.value !== "function") {
-                state_obj.value = ko.observable(state_obj.value).extend({rateLimit: cfg_show_rf_refresh_delay}) ;
-            }
-
-            var ko_context = document.getElementById(id_elto);
-            ko.cleanNode(ko_context);
-            ko.applyBindings(simhw_sim_state(state), ko_context);
         }
 
 
@@ -220,19 +109,9 @@
 
         // Register File
 
-        function show_rf_values ( )
-        {
-            return simcore_action_ui("CPU", 0, "show_rf_values")() ;
-        }
-
         function show_rf_names ( )
         {
             return simcore_action_ui("CPU", 0, "show_rf_names")() ;
-        }
-
-        function show_states ( )
-        {
-            return simcore_action_ui("CPU", 0, "show_states")() ;
         }
 
         // Console (Screen + Keyboard)
@@ -263,9 +142,9 @@
 	    return simcore_action_ui("MEMORY", 0, "show_main_memory")(memory, index, redraw, updates) ;
         }
 
-        function show_control_memory ( memory, memory_dashboard, index, redraw )
+        function show_control_memory ( memory, index, redraw )
         {
-	    return simcore_action_ui("MEMORY", 0, "show_control_memory")(memory, memory_dashboard, index, redraw) ;
+	    return simcore_action_ui("MEMORY", 0, "show_control_memory")(memory, index, redraw) ;
         }
 
         function show_memories_values ( )
@@ -280,7 +159,7 @@
 	    var maddr_name = simhw_sim_ctrlStates_get().mpc.state ;
 	    var reg_maddr  = get_value(simhw_sim_state(maddr_name)) ;
 
-	    show_control_memory(simhw_internalState('MC'), simhw_internalState('MC_dashboard'), reg_maddr, true) ;
+	    show_control_memory(simhw_internalState('MC'), reg_maddr, true) ;
 	}
 
         // CPU svg: update_draw
@@ -337,5 +216,35 @@
 
             alert(msg) ;
 	    return true ;
+        }
+
+        function element_scroll_get ( list_id )
+        {
+            var offset = 0 ;
+
+            var obj_byid = $(list_id) ;
+            if (obj_byid.length > 0) {
+                offset = obj_byid[0].scrollTop ;
+            }
+
+            return offset ;
+        }
+
+        function element_scroll_set ( list_id, offset )
+        {
+            var obj_byid = $(list_id) ;
+            if (obj_byid.length > 0) {
+                obj_byid[0].scrollTop = offset ;
+            }
+        }
+
+        function element_scroll_setRelative ( list_id, obj_id, offset )
+        {
+            var obj_byid = $(obj_id) ;
+            if (obj_byid.length > 0)
+            {
+                var topPos = obj_byid[0].offsetTop ;
+                element_scroll_set(list_id, topPos + offset) ;
+            }
         }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2020 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
+ *  Copyright 2015-2021 Felix Garcia Carballeira, Alejandro Calderon Mateos, Javier Prieto Cepeda, Saul Alonso Monsalve
  *
  *  This file is part of WepSIM.
  *
@@ -33,7 +33,6 @@
                                   "<ul>"+
                                   "<li> 사용할 하드웨어 (예 : EP 프로세서 등) </li>"+
                                   "<li> 정수 MIPS<sub>32</sub> 또는 RISC-V<sub>32</sub> 명령어가있는 어셈블리 전용 모드"+
-                                  "<li> 처음에 권장되는 튜토리얼 모드;-) </li>"+
                                   "</ul>",
 
                         "step3":  "오른쪽 상단의 '도움말'버튼을 누르면 관련 대화 상자가 열립니다. <br>" +
